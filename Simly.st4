@@ -1,0 +1,12 @@
+require java lang.
+
+def var = 1.
+var = 99.
+
+
+while var > 0  do
+def t = 13.
+System:out:println( var + t * 9 ).
+var = var - 1 .
+stop
+
