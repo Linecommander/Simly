@@ -30,12 +30,7 @@ import Simly.syntaxtree.VariableDeclaration;
 import Simly.syntaxtree.VariableName;
 import Simly.syntaxtree.WhileExpression;
 
-/**
- * Simly Interpreter
- * 
- * @author Adrabi Abderrahim
- *
- */
+
 public class Interpreter implements Interpret {
 
 	/**
