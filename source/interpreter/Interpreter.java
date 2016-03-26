@@ -1,48 +1,37 @@
-/**
- * The Code Project Open License (CPOL) 1.02
- * 		see : http://www.codeproject.com/info/cpol10.aspx
- * 
- * Author	: Adrabi Abderrahim
- * Mail		: adrabi[at]gmail[dot]com
- * Year		: 2009
- * Discrip	: this code a part of "Create Your Own Programming Language, just game ?" 
- * 			  and code using is from Alef++ project
- * 			  https://sourceforge.net/projects/alefpp/
- */
 
-package st4tic.interpreter;
+package Simly.interpreter;
 
 import java.util.Enumeration;
 import java.util.LinkedList;
 
-import st4tic.core.St4ticScope;
-import st4tic.core.St4ticValue;
-import st4tic.core.St4ticVariable;
-import st4tic.reflect.St4ticReflection;
-import st4tic.syntaxtree.AdditiveExpression;
-import st4tic.syntaxtree.IfExpression;
-import st4tic.syntaxtree.JavaStaticMethods;
-import st4tic.syntaxtree.MathExpression;
-import st4tic.syntaxtree.MultiplicativeExpression;
-import st4tic.syntaxtree.NodeChoice;
-import st4tic.syntaxtree.NodeSequence;
-import st4tic.syntaxtree.NodeToken;
-import st4tic.syntaxtree.RelationalEqualityExpression;
-import st4tic.syntaxtree.RelationalExprssion;
-import st4tic.syntaxtree.RelationalGreaterExpression;
-import st4tic.syntaxtree.RelationalLessExpression;
-import st4tic.syntaxtree.Require;
-import st4tic.syntaxtree.Start;
-import st4tic.syntaxtree.StatementExpression;
-import st4tic.syntaxtree.UnaryExpression;
-import st4tic.syntaxtree.UnaryRelational;
-import st4tic.syntaxtree.VariableAssign;
-import st4tic.syntaxtree.VariableDeclaration;
-import st4tic.syntaxtree.VariableName;
-import st4tic.syntaxtree.WhileExpression;
+import Simly.core.SimlyScope;
+import Simly.core.SimlyValue;
+import Simly.core.SimlyVariable;
+import Simly.reflect.SimlyReflection;
+import Simly.syntaxtree.AdditiveExpression;
+import Simly.syntaxtree.IfExpression;
+import Simly.syntaxtree.JavaStaticMethods;
+import Simly.syntaxtree.MathExpression;
+import Simly.syntaxtree.MultiplicativeExpression;
+import Simly.syntaxtree.NodeChoice;
+import Simly.syntaxtree.NodeSequence;
+import Simly.syntaxtree.NodeToken;
+import Simly.syntaxtree.RelationalEqualityExpression;
+import Simly.syntaxtree.RelationalExprssion;
+import Simly.syntaxtree.RelationalGreaterExpression;
+import Simly.syntaxtree.RelationalLessExpression;
+import Simly.syntaxtree.Require;
+import Simly.syntaxtree.Start;
+import Simly.syntaxtree.StatementExpression;
+import Simly.syntaxtree.UnaryExpression;
+import Simly.syntaxtree.UnaryRelational;
+import Simly.syntaxtree.VariableAssign;
+import Simly.syntaxtree.VariableDeclaration;
+import Simly.syntaxtree.VariableName;
+import Simly.syntaxtree.WhileExpression;
 
 /**
- * St4tic Interpreter
+ * Simly Interpreter
  * 
  * @author Adrabi Abderrahim
  *
@@ -50,13 +39,13 @@ import st4tic.syntaxtree.WhileExpression;
 public class Interpreter implements Interpret {
 
 	/**
-	 * here is start point for interpreting St4tic
+	 * here is start point for interpreting Simly
 	 * @throws Exception 
 	 */
 	public Object visit(Start node) throws Exception {
 		
 		/*
-		 * first setup of imported packages and add it to St4ticReflection
+		 * first setup of imported packages and add it to SimlyReflection
 		 * class for using it with reflection full class identifier like :
 		 * 		"java.lang.System"
 		 * the elements f0 ... fn has generated automatically by JTB =)
@@ -67,7 +56,7 @@ public class Interpreter implements Interpret {
 		{
 			// adding required packages
 			NodeSequence ns = (NodeSequence) importedPackagesEnum.nextElement();
-			St4ticReflection.pushPackage( this.visit( (Require) ns.elementAt( 0 ) , null).toString() );
+			SimlyReflection.pushPackage( this.visit( (Require) ns.elementAt( 0 ) , null).toString() );
 		}
 		
 		/*
@@ -85,7 +74,7 @@ public class Interpreter implements Interpret {
 		 if( node.f1.size() > 0 )
 		 {
 			//~ creating of parent scope
-			 St4ticScope parent = new St4ticScope( null );
+			 SimlyScope parent = new SimlyScope( null );
 			 Enumeration statement = node.f1.elements();
 			 while( statement.hasMoreElements() )
 			 {
@@ -100,7 +89,7 @@ public class Interpreter implements Interpret {
 	 * this method allow retrieving and transforming required packages
 	 * to Java format 
 	 */
-	public Object visit(Require node, St4ticScope scope, Object... objects) {
+	public Object visit(Require node, SimlyScope scope, Object... objects) {
 		/*
 		 * before begin: 
 		 * 		notice to all reserved keywords has ignored !
@@ -122,17 +111,17 @@ public class Interpreter implements Interpret {
 	/**
 	 * integers operation
 	 */
-	public Object visit(MathExpression node, St4ticScope scope, Object... objects) throws Exception {
+	public Object visit(MathExpression node, SimlyScope scope, Object... objects) throws Exception {
 		return this.visit(node.f0, scope, objects);
 	}
 
 	/**
 	 * additive operations
 	 */
-	public Object visit(AdditiveExpression node, St4ticScope scope,
+	public Object visit(AdditiveExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
-		St4ticValue value = (St4ticValue)this.visit(node.f0, scope, objects);
+		SimlyValue value = (SimlyValue)this.visit(node.f0, scope, objects);
 		
 		Enumeration e = node.f1.elements();
 		while( e.hasMoreElements() )
@@ -140,7 +129,7 @@ public class Interpreter implements Interpret {
 			NodeSequence ns = (NodeSequence) e.nextElement();
 			NodeChoice nc = (NodeChoice) ns.elementAt( 0 );
 			
-			St4ticValue tmp = (St4ticValue) this.visit( (MultiplicativeExpression) ns.elementAt(1) , scope, objects);
+			SimlyValue tmp = (SimlyValue) this.visit( (MultiplicativeExpression) ns.elementAt(1) , scope, objects);
 			if( nc.choice.toString().equals("+") )
 			{
 				tmp.setValue( value.getValue() + tmp.getValue() );
@@ -158,17 +147,17 @@ public class Interpreter implements Interpret {
 	/**
 	 * multiplicative operation
 	 */
-	public Object visit(MultiplicativeExpression node, St4ticScope scope,
+	public Object visit(MultiplicativeExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
-		St4ticValue value = (St4ticValue)this.visit(node.f0, scope, objects);
+		SimlyValue value = (SimlyValue)this.visit(node.f0, scope, objects);
 		
 		Enumeration e = node.f1.elements();
 		while( e.hasMoreElements() )
 		{
 			NodeSequence ns = (NodeSequence) e.nextElement();
 			NodeChoice nc = (NodeChoice) ns.elementAt( 0 );
-			St4ticValue tmp = (St4ticValue) this.visit( (UnaryExpression) ns.elementAt(1) , scope, objects);
+			SimlyValue tmp = (SimlyValue) this.visit( (UnaryExpression) ns.elementAt(1) , scope, objects);
 			
 			if( nc.choice.toString().equals("*") )
 			{
@@ -192,14 +181,14 @@ public class Interpreter implements Interpret {
 	/**
 	 * getting values
 	 */
-	public Object visit(UnaryExpression node, St4ticScope scope,
+	public Object visit(UnaryExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		/*
 		 * We are allowed just operation in IN (integers) ;)
 		 */
 		if( node.f0.choice instanceof NodeToken )
 		{
-			St4ticValue value = new St4ticValue();
+			SimlyValue value = new SimlyValue();
 			value.setValue( Long.parseLong( node.f0.choice.toString() ) );
 			value.setType( long.class ); // here ;)
 			return value;
@@ -228,7 +217,7 @@ public class Interpreter implements Interpret {
 	/**
 	 * relational testing ...
 	 */
-	public Object visit(RelationalExprssion node, St4ticScope scope,
+	public Object visit(RelationalExprssion node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
 		return this.visit(node.f0, scope, objects);
@@ -237,7 +226,7 @@ public class Interpreter implements Interpret {
 	/**
 	 * testing for equality "1 == 1"
 	 */
-	public Object visit(RelationalEqualityExpression node, St4ticScope scope,
+	public Object visit(RelationalEqualityExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
 		Object obj = this.visit(node.f0, scope, objects);
@@ -264,7 +253,7 @@ public class Interpreter implements Interpret {
 	/**
 	 * testing for greater value "1 > 0"
 	 */
-	public Object visit(RelationalGreaterExpression node, St4ticScope scope,
+	public Object visit(RelationalGreaterExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
 		Object obj = this.visit(node.f0, scope, objects);
@@ -291,7 +280,7 @@ public class Interpreter implements Interpret {
 	/**
 	 * test for less value "0 < 1"
 	 */
-	public Object visit(RelationalLessExpression node, St4ticScope scope,
+	public Object visit(RelationalLessExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		Object obj = this.visit(node.f0, scope, objects);
 		if( node.f1.node != null && obj instanceof Long)
@@ -317,22 +306,22 @@ public class Interpreter implements Interpret {
 	/**
 	 * method for getting a value to be tested
 	 */
-	public Object visit(UnaryRelational node, St4ticScope scope,
+	public Object visit(UnaryRelational node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
-		return ((St4ticValue)this.visit(node.f0, scope, objects)).getValue() ;
+		return ((SimlyValue)this.visit(node.f0, scope, objects)).getValue() ;
 	}
 
 	/**
-	 * St4tic "if" condition
+	 * Simly "if" condition
 	 */
-	public Object visit(IfExpression node, St4ticScope scope, Object... objects) throws Exception {
+	public Object visit(IfExpression node, SimlyScope scope, Object... objects) throws Exception {
 		
 		/*
 		 * like variable declaration we ignore all keywords, for more information
 		 * see interface Interpret.java or JTB grammar
 		 */
-		St4ticScope ifScope = new St4ticScope( scope );
+		SimlyScope ifScope = new SimlyScope( scope );
 		if( new Boolean(this.visit(node.f1, scope, objects).toString()) )
 		{
 			Enumeration e = node.f3.elements();
@@ -345,15 +334,15 @@ public class Interpreter implements Interpret {
 	}
 
 	/**
-	 * St4tic "while" expression
+	 * Simly "while" expression
 	 */
-	public Object visit(WhileExpression node, St4ticScope scope,
+	public Object visit(WhileExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		/*
 		 * like variable declaration we ignore all keywords, for more information
 		 * see interface Interpret.java or JTB grammar
 		 */
-		St4ticScope whileScope = new St4ticScope( scope );
+		SimlyScope whileScope = new SimlyScope( scope );
 		while( new Boolean(this.visit(node.f1, scope, objects).toString()) )
 		{
 			Enumeration e = node.f3.elements();
@@ -369,15 +358,15 @@ public class Interpreter implements Interpret {
 	 * variable declaration and assignment
 	 * @throws Exception 
 	 */
-	public Object visit(VariableDeclaration node, St4ticScope scope,
+	public Object visit(VariableDeclaration node, SimlyScope scope,
 			Object... objects) throws Exception {
 		/*
 		 * we ignore "def", "=" and "." keywords
 		 */
 		
-		St4ticVariable var = new St4ticVariable();
+		SimlyVariable var = new SimlyVariable();
 		var.setVariableName( this.visit( node.f1 , scope, objects).toString() ) ;
-		var.setVariableValue( (St4ticValue) this.visit(node.f3, scope, objects) );
+		var.setVariableValue( (SimlyValue) this.visit(node.f3, scope, objects) );
 		
 		/*
 		 * we add a variable to current scope for variable life cycle
@@ -391,12 +380,12 @@ public class Interpreter implements Interpret {
 	 * assigning a new value to variable
 	 * @throws Exception 
 	 */
-	public Object visit(VariableAssign node, St4ticScope scope, Object... objects) throws Exception {
+	public Object visit(VariableAssign node, SimlyScope scope, Object... objects) throws Exception {
 		String name = this.visit(node.f0, scope, objects).toString() ;
 		if( scope.existsChild( name ) )
 		{
-			St4ticVariable var = (St4ticVariable) scope.child( name ) ;
-			var.setVariableValue( (St4ticValue) this.visit(node.f2, scope, objects) );
+			SimlyVariable var = (SimlyVariable) scope.child( name ) ;
+			var.setVariableValue( (SimlyValue) this.visit(node.f2, scope, objects) );
 		}
 		return null;
 	}
@@ -404,7 +393,7 @@ public class Interpreter implements Interpret {
 	/**
 	 * getting a variable name
 	 */
-	public Object visit(VariableName node, St4ticScope scope, Object... objects) {
+	public Object visit(VariableName node, SimlyScope scope, Object... objects) {
 		return node.f0.tokenImage;
 	}
 
@@ -412,7 +401,7 @@ public class Interpreter implements Interpret {
 	 * method for executing a static Java methods
 	 * @throws Exception 
 	 */
-	public Object visit(JavaStaticMethods node, St4ticScope scope,
+	public Object visit(JavaStaticMethods node, SimlyScope scope,
 			Object... objects) throws Exception {
 		
 		/*
@@ -421,36 +410,36 @@ public class Interpreter implements Interpret {
 		 */
 		
 		//f0 is class name 
-		String identifier = St4ticReflection.fullIdentifier( node.f0.tokenImage ) ;
+		String identifier = SimlyReflection.fullIdentifier( node.f0.tokenImage ) ;
 		if( identifier != null )
 		{
 			// making a class object
-			Object currentObject = St4ticReflection.makeObject ( identifier );
+			Object currentObject = SimlyReflection.makeObject ( identifier );
 			if( currentObject != null ){
 				Enumeration e = node.f1.elements();
 				//~ getting a last field object
 				while( e.hasMoreElements() )
 				{
 					NodeSequence ns = (NodeSequence) e.nextElement(); 
-					if( St4ticReflection.existsField( currentObject , ns.elementAt( 1 ).toString()  ) )
+					if( SimlyReflection.existsField( currentObject , ns.elementAt( 1 ).toString()  ) )
 					{
-						currentObject = St4ticReflection.getFieldObject( currentObject , ns.elementAt( 1 ).toString() );
+						currentObject = SimlyReflection.getFieldObject( currentObject , ns.elementAt( 1 ).toString() );
 					}
 					else
 					{
-						LinkedList<St4ticValue> params = new LinkedList<St4ticValue>();
-						params.add( (St4ticValue) this.visit(node.f3, scope, objects) );
+						LinkedList<SimlyValue> params = new LinkedList<SimlyValue>();
+						params.add( (SimlyValue) this.visit(node.f3, scope, objects) );
 						Enumeration eVal = node.f4.elements();
 						while( eVal.hasMoreElements() )
 						{
 							NodeSequence nsVal = (NodeSequence) eVal.nextElement();
-							params.add( (St4ticValue) this.visit( (MathExpression) nsVal.elementAt(1) , scope, objects) );
+							params.add( (SimlyValue) this.visit( (MathExpression) nsVal.elementAt(1) , scope, objects) );
 						}
 						
 						//~ test and invoking
-						if( St4ticReflection.existsSubroutine( currentObject , ns.elementAt( 1 ).toString() , params.toArray( new St4ticValue[]{} )) )
+						if( SimlyReflection.existsSubroutine( currentObject , ns.elementAt( 1 ).toString() , params.toArray( new SimlyValue[]{} )) )
 						{
-							return St4ticReflection.invokeStaticSubroutine( currentObject , ns.elementAt( 1 ).toString() , params.toArray( new St4ticValue[]{} )) ;
+							return SimlyReflection.invokeStaticSubroutine( currentObject , ns.elementAt( 1 ).toString() , params.toArray( new SimlyValue[]{} )) ;
 						}
 						break;
 					}
@@ -462,10 +451,10 @@ public class Interpreter implements Interpret {
 	}
 
 	/**
-	 * Statement is a core of interpreting St4tic source code
+	 * Statement is a core of interpreting Simly source code
 	 * @throws Exception 
 	 */
-	public Object visit(StatementExpression node, St4ticScope scope,
+	public Object visit(StatementExpression node, SimlyScope scope,
 			Object... objects) throws Exception {
 		/*
 		 * Statement expression do *NOTHING* =) just redirecting
